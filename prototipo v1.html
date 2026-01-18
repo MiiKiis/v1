@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eneba - Tienda de Juegos Digitales</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background-color: #0f0f0f;
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        /* HEADER */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            padding: 0.75rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 900;
+            color: white;
+            letter-spacing: -1px;
+            text-decoration: none;
+        }
+
+        .header-center {
+            flex: 1;
+            margin: 0 2rem;
+            max-width: 400px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-bar input {
+            flex: 1;
+            padding: 0.6rem 1rem;
+            border: none;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #1a1a1a;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+        }
+
+        .search-bar input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.2);
+        }
+
+        .search-bar button {
+            padding: 0.6rem 1.2rem;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .search-bar button:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: white;
+            transition: transform 0.2s ease;
+        }
+
+        .cart-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .cart-counter {
+            position: absolute;
+            top: -8px;
+            right: -10px;
+            background: #ff3a44;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        /* MAIN LAYOUT */
+        main {
+            margin-top: 70px;
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 1.5rem;
+            padding: 1.5rem;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* SIDEBAR FILTERS */
+        .sidebar {
+            background: #1a1a1a;
+            padding: 1.5rem;
+            border-radius: 8px;
+            height: fit-content;
+            position: sticky;
+            top: 90px;
+        }
+
+        .filter-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .filter-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #7c3aed;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .filter-option:hover {
+            background: rgba(124, 58, 237, 0.1);
+        }
+
+        .filter-option input[type="checkbox"] {
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: #7c3aed;
+        }
+
+        .filter-option label {
+            cursor: pointer;
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        /* CONTENT AREA */
+        .content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        /* GAME CARD */
+        .game-card {
+            background: #1a1a1a;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #333;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(124, 58, 237, 0.2);
+            border-color: #7c3aed;
+        }
+
+        .game-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #2d1b4e 0%, #1a0f2e 100%);
+        }
+
+        .game-info {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .game-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            color: white;
+            line-height: 1.3;
+        }
+
+        .game-platform {
+            font-size: 0.75rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+        }
+
+        .game-price-section {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .game-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #7c3aed;
+        }
+
+        .game-original-price {
+            font-size: 0.85rem;
+            color: #666;
+            text-decoration: line-through;
+        }
+
+        .discount-badge {
+            background: #ff3a44;
+            color: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .buy-btn {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            margin-top: auto;
+        }
+
+        .buy-btn:hover {
+            transform: scale(1.02);
+            box-shadow: 0 6px 12px rgba(124, 58, 237, 0.3);
+        }
+
+        .buy-btn:active {
+            transform: scale(0.98);
+        }
+
+        .buy-btn.added {
+            background: #10b981;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #0a0a0a;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #333;
+            margin-top: 3rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #888;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover {
+            color: #7c3aed;
+        }
+
+        /* TOAST NOTIFICATION */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #10b981;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+            z-index: 999;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            main {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .sidebar {
+                position: static;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+
+            .filter-section {
+                margin-bottom: 0;
+            }
+
+            header {
+                flex-wrap: wrap;
+                gap: 0.75rem;
+            }
+
+            .header-center {
+                flex: 1 1 100%;
+                margin: 0;
+                max-width: 100%;
+                order: 3;
+            }
+
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+
+            .footer-links {
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 0.5rem;
+            }
+
+            .logo {
+                font-size: 1.25rem;
+            }
+
+            .header-center {
+                order: 3;
+                flex-basis: 100%;
+                margin-top: 0.5rem;
+            }
+
+            .search-bar input {
+                font-size: 0.85rem;
+                padding: 0.5rem 0.75rem;
+            }
+
+            .games-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 0.75rem;
+            }
+
+            .game-info {
+                padding: 0.75rem;
+            }
+
+            .game-title {
+                font-size: 0.85rem;
+            }
+
+            .game-price {
+                font-size: 1.1rem;
+            }
+
+            .buy-btn {
+                padding: 0.6rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .toast {
+                left: 10px;
+                right: 10px;
+                bottom: 10px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header role="banner">
+        <a href="#" class="logo" aria-label="Eneba Home">ENEBA</a>
+        <div class="header-center">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="Buscar juegos..." aria-label="Buscar juegos">
+                <button aria-label="Buscar">🔍</button>
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="cart-icon" id="cartIcon" role="button" tabindex="0" aria-label="Carrito de compras">
+                🛒
+                <span class="cart-counter" id="cartCounter" aria-live="polite">0</span>
+            </div>
+        </div>
+    </header>
+
+    <main role="main">
+        <aside class="sidebar" role="complementary">
+            <div class="filter-section">
+                <h3 class="filter-title">Género</h3>
+                <div class="filter-options">
+                    <label class="filter-option">
+                        <input type="checkbox" class="genre-filter" value="accion">
+                        <span>Acción</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" class="genre-filter" value="rpg">
+                        <span>RPG</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" class="genre-filter" value="estrategia">
+                        <span>Estrategia</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" class="genre-filter" value="deportes">
+                        <span>Deportes</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h3 class="filter-title">Precio</h3>
+                <div class="filter-options">
+                    <label class="filter-option">
+                        <input type="checkbox" class="price-filter" value="0-10">
+                        <span>$0 - $10</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" class="price-filter" value="10-30">
+                        <span>$10 - $30</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" class="price-filter" value="30-60">
+                        <span>$30 - $60</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h3 class="filter-title">Plataforma</h3>
+                <div class="filter-options">
+                    <label class="filter-option">
+                        <input type="checkbox" class="platform-filter" value="pc">
+                        <span>PC</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" class="platform-filter" value="playstation">
+                        <span>PlayStation</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" class="platform-filter" value="xbox">
+                        <span>Xbox</span>
+                    </label>
+                    <label class="filter-option">
+                        <input type="checkbox" class="platform-filter" value="nintendo">
+                        <span>Nintendo</span>
+                    </label>
+                </div>
+            </div>
+        </aside>
+
+        <div class="content">
+            <h2 class="section-title">Juegos Populares</h2>
+            <div class="games-grid" id="gamesGrid" role="grid" aria-label="Lista de juegos">
+            </div>
+        </div>
+    </main>
+
+    <footer role="contentinfo">
+        <div class="footer-links">
+            <a href="#about">Acerca de</a>
+            <a href="#contact">Contacto</a>
+            <a href="#privacy">Privacidad</a>
+            <a href="#terms">Términos</a>
+        </div>
+        <p>&copy; 2026 Eneba - Tienda de Juegos Digitales. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        const gamesData = [
+            {
+                id: 1,
+                title: 'Assassin\'s Creed Shadows',
+                platform: 'PC / PS5 / Xbox',
+                price: 59.99,
+                originalPrice: 69.99,
+                genre: 'accion',
+                priceRange: '30-60',
+                image: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22160%22%3E%3Cdefs%3E%3ClinearGradient id=%22g1%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%22100%25%22%3E%3Cstop offset=%220%25%22 style=%22stop-color:%237c3aed;stop-opacity:1%22 /%3E%3Cstop offset=%22100%25%22 style=%22stop-color:%235b21b6;stop-opacity:1%22 /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%22200%22 height=%22160%22 fill=%22url(%23g1)%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2216%22 fill=%22white%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-weight=%22bold%22%3EAssassin%27s Creed%3C/text%3E%3C/svg%3E'
+            },
+            {
+                id: 2,
+                title: 'Elden Ring',
+                platform: 'PC / PS5 / Xbox',
+                price: 49.99,
+                originalPrice: 59.99,
+                genre: 'rpg',
+                priceRange: '30-60',
+                image: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22160%22%3E%3Cdefs%3E%3ClinearGradient id=%22g2%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%22100%25%22%3E%3Cstop offset=%220%25%22 style=%22stop-color:%23d4af37;stop-opacity:1%22 /%3E%3Cstop offset=%22100%25%22 style=%22stop-color:%238b6914;stop-opacity:1%22 /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%22200%22 height=%22160%22 fill=%22url(%23g2)%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2216%22 fill=%22white%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-weight=%22bold%22%3EElden Ring%3C/text%3E%3C/svg%3E'
+            },
+            {
+                id: 3,
+                title: 'Palworld',
+                platform: 'PC / Xbox Game Pass',
+                price: 29.99,
+                originalPrice: 39.99,
+                genre: 'rpg',
+                priceRange: '10-30',
+                image: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22160%22%3E%3Cdefs%3E%3ClinearGradient id=%22g3%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%22100%25%22%3E%3Cstop offset=%220%25%22 style=%22stop-color:%2314b8a6;stop-opacity:1%22 /%3E%3Cstop offset=%22100%25%22 style=%22stop-color:%230f766e;stop-opacity:1%22 /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%22200%22 height=%22160%22 fill=%22url(%23g3)%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2216%22 fill=%22white%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-weight=%22bold%22%3EPalworld%3C/text%3E%3C/svg%3E'
+            },
+            {
+                id: 4,
+                title: 'StarCraft II',
+                platform: 'PC',
+                price: 9.99,
+                originalPrice: 19.99,
+                genre: 'estrategia',
+                priceRange: '0-10',
+                image: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22160%22%3E%3Cdefs%3E%3ClinearGradient id=%22g4%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%22100%25%22%3E%3Cstop offset=%220%25%22 style=%22stop-color:%2360a5fa;stop-opacity:1%22 /%3E%3Cstop offset=%22100%25%22 style=%22stop-color:%231e40af;stop-opacity:1%22 /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%22200%22 height=%22160%22 fill=%22url(%23g4)%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2216%22 fill=%22white%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-weight=%22bold%22%3EStarCraft II%3C/text%3E%3C/svg%3E'
+            },
+            {
+                id: 5,
+                title: 'Madden NFL 25',
+                platform: 'PS5 / Xbox / PC',
+                price: 54.99,
+                originalPrice: 69.99,
+                genre: 'deportes',
+                priceRange: '30-60',
+                image: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22160%22%3E%3Cdefs%3E%3ClinearGradient id=%22g5%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%22100%25%22%3E%3Cstop offset=%220%25%22 style=%22stop-color:%23ef4444;stop-opacity:1%22 /%3E%3Cstop offset=%22100%25%22 style=%22stop-color:%23991b1b;stop-opacity:1%22 /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%22200%22 height=%22160%22 fill=%22url(%23g5)%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2216%22 fill=%22white%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-weight=%22bold%22%3EMadden NFL 25%3C/text%3E%3C/svg%3E'
+            },
+            {
+                id: 6,
+                title: 'Cyberpunk 2077',
+                platform: 'PC / PS5 / Xbox',
+                price: 39.99,
+                originalPrice: 59.99,
+                genre: 'accion',
+                priceRange: '30-60',
+                image: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22160%22%3E%3Cdefs%3E%3ClinearGradient id=%22g6%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%22100%25%22%3E%3Cstop offset=%220%25%22 style=%22stop-color:%23ff006e;stop-opacity:1%22 /%3E%3Cstop offset=%22100%25%22 style=%22stop-color:%23880e4f;stop-opacity:1%22 /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%22200%22 height=%22160%22 fill=%22url(%23g6)%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2216%22 fill=%22white%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-weight=%22bold%22%3ECyberpunk 2077%3C/text%3E%3C/svg%3E'
+            },
+            {
+                id: 7,
+                title: 'Final Fantasy XVI',
+                platform: 'PS5 / PC',
+                price: 44.99,
+                originalPrice: 59.99,
+                genre: 'rpg',
+                priceRange: '30-60',
+                image: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22160%22%3E%3Cdefs%3E%3ClinearGradient id=%22g7%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%22100%25%22%3E%3Cstop offset=%220%25%22 style=%22stop-color:%2306b6d4;stop-opacity:1%22 /%3E%3Cstop offset=%22100%25%22 style=%22stop-color:%23164e63;stop-opacity:1%22 /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%22200%22 height=%22160%22 fill=%22url(%23g7)%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2216%22 fill=%22white%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-weight=%22bold%22%3EFinal Fantasy XVI%3C/text%3E%3C/svg%3E'
+            },
+            {
+                id: 8,
+                title: 'Total War: Warhammer III',
+                platform: 'PC',
+                price: 34.99,
+                originalPrice: 59.99,
+                genre: 'estrategia',
+                priceRange: '30-60',
+                image: 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22160%22%3E%3Cdefs%3E%3ClinearGradient id=%22g8%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%22100%25%22%3E%3Cstop offset=%220%25%22 style=%22stop-color:%238b5cf6;stop-opacity:1%22 /%3E%3Cstop offset=%22100%25%22 style=%22stop-color:%235b21b6;stop-opacity:1%22 /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width=%22200%22 height=%22160%22 fill=%22url(%23g8)%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2216%22 fill=%22white%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 font-weight=%22bold%22%3ETW: Warhammer III%3C/text%3E%3C/svg%3E'
+            }
+        ];
+
+        let cart = [];
+        let filteredGames = [...gamesData];
+
+        const gamesGrid = document.getElementById('gamesGrid');
+        const cartCounter = document.getElementById('cartCounter');
+        const cartIcon = document.getElementById('cartIcon');
+        const searchInput = document.getElementById('searchInput');
+
+        function renderGames(games) {
+            gamesGrid.innerHTML = games.map(game => {
+                const discount = Math.round(((game.originalPrice - game.price) / game.originalPrice) * 100);
+                return `
+                    <article class="game-card" role="listitem">
+                        <img src="${game.image}" alt="${game.title}" class="game-image" loading="lazy">
+                        <div class="game-info">
+                            <h3 class="game-title">${game.title}</h3>
+                            <p class="game-platform">${game.platform}</p>
+                            <div class="game-price-section">
+                                <span class="game-price">$${game.price.toFixed(2)}</span>
+                                <span class="game-original-price">$${game.originalPrice.toFixed(2)}</span>
+                                ${discount > 0 ? `<span class="discount-badge">-${discount}%</span>` : ''}
+                            </div>
+                            <button class="buy-btn" data-game-id="${game.id}" aria-label="Agregar ${game.title} al carrito">
+                                Comprar
+                            </button>
+                        </div>
+                    </article>
+                `;
+            }).join('');
+
+            document.querySelectorAll('.buy-btn').forEach(btn => {
+                btn.addEventListener('click', addToCart);
+            });
+        }
+
+        function addToCart(e) {
+            const gameId = parseInt(e.target.dataset.gameId);
+            const game = gamesData.find(g => g.id === gameId);
+
+            if (game) {
+                const existingItem = cart.find(item => item.id === gameId);
+
+                if (existingItem) {
+                    existingItem.quantity++;
+                } else {
+                    cart.push({ ...game, quantity: 1 });
+                }
+
+                updateCartCounter();
+                showToast(`${game.title} agregado al carrito`);
+
+                e.target.classList.add('added');
+                setTimeout(() => e.target.classList.remove('added'), 1000);
+            }
+        }
+
+        function updateCartCounter() {
+            const total = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCounter.textContent = total;
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            toast.setAttribute('role', 'status');
+            toast.setAttribute('aria-live', 'polite');
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
+        }
+
+        function applyFilters() {
+            const genres = Array.from(document.querySelectorAll('.genre-filter:checked')).map(el => el.value);
+            const prices = Array.from(document.querySelectorAll('.price-filter:checked')).map(el => el.value);
+            const platforms = Array.from(document.querySelectorAll('.platform-filter:checked')).map(el => el.value);
+            const searchTerm = searchInput.value.toLowerCase();
+
+            filteredGames = gamesData.filter(game => {
+                const genreMatch = genres.length === 0 || genres.includes(game.genre);
+                const priceMatch = prices.length === 0 || prices.includes(game.priceRange);
+                const platformMatch = platforms.length === 0 || platforms.some(p => game.platform.toLowerCase().includes(p));
+                const searchMatch = game.title.toLowerCase().includes(searchTerm);
+
+                return genreMatch && priceMatch && platformMatch && searchMatch;
+            });
+
+            renderGames(filteredGames);
+        }
+
+        document.querySelectorAll('.genre-filter, .price-filter, .platform-filter').forEach(filter => {
+            filter.addEventListener('change', applyFilters);
+        });
+
+        searchInput.addEventListener('input', applyFilters);
+
+        cartIcon.addEventListener('click', () => {
+            if (cart.length > 0) {
+                showToast(`Carrito: ${cart.length} juego(s) - Total: $${cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2)}`);
+            } else {
+                showToast('Tu carrito está vacío');
+            }
+        });
+
+        cartIcon.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                cartIcon.click();
+            }
+        });
+
+        renderGames(gamesData);
+    </script>
+</body>
+</html>
